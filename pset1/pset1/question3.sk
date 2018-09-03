@@ -1,5 +1,7 @@
-generator bit expBoolean(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
-
+generator bit expBool(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
+    //In this generator, nvars is the number of variables and nconsts is the number of constants.
+    //the array vars contains the values of all the variables and the array consts of all the constants.
+    //Note that unlike problem 1, where you were generating ASTs, here you are synthesizing the actual function.
     if (bnd == 0) {
         return false;
     }
@@ -8,22 +10,22 @@ generator bit expBoolean(int nvars, int nconsts, int bnd, int[nvars] vars, int[n
         return false;
     }
     if (t ==1) {
-        bit t1 = expBoolean(nvars, nconsts, (bnd-1), vars, consts);
-        return !t1;
+        bit b = expBool(nvars, nconsts, (bnd-1), vars, consts);
+        return !b;
     }
     if (t ==2) {
-        bit t1 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
-        bit t2 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
-        return t1 < t2;
+        bit a1 = expBool(nvars, nconsts, bnd-1, vars, consts);
+        bit a2 = expBool(nvars, nconsts, bnd-1, vars, consts);
+        return a1 < a2;
     }
     if (t ==3) {
-        bit t1 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
-        bit t2 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
-        return t1 && t2;
+        bit a1 = expBool(nvars, nconsts, bnd-1, vars, consts);
+        bit a2 = expBool(nvars, nconsts, bnd-1, vars, consts);
+        return a1 && a2;
     }
 }
 
-generator int expInteger(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
+generator int expInt(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
     //In this generator, nvars is the number of variables and nconsts is the number of constants.
     //the array vars contains the values of all the variables and the array consts of all the constants.
     //Note that unlike problem 1, where you were generating ASTs, here you are synthesizing the actual function.
@@ -42,42 +44,51 @@ generator int expInteger(int nvars, int nconsts, int bnd, int[nvars] vars, int[n
         return vars[nvar];
     }
     if (t == 2) {
-        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        return t1 + t2;
+        int a1 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        int a2 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        return a1 + a2;
     }
     if (t == 3) {
-        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        return t1 * t2;
+        int a1 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        int a2 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        return a1 * a2;
     }
     if (t == 4) {
-        bit condition = expBoolean(nvars, nconsts, bnd-1, vars, consts);
-        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
-        return condition ? t1:t2;
+        bit b = expBool(nvars, nconsts, bnd-1, vars, consts);
+        int a1 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        int a2 = expInt(nvars, nconsts, bnd-1, vars, consts);
+        return b ? a1:a2;
     }
 }
 
 void aux(int x, int y, int out) {
-    int[3] ncons = [-1,0,1];
-    int[2] nvars = [x,y];
-    assert expInteger(2, 3, 3, nvars, ncons) == out;
+    int[3] c;
+    c[0] = -1;
+    c[1] = 0;
+    c[2] = 1;
+    int[2] nvars;
+    nvars[0] = x;
+    nvars[1] = y;
+    assert expInt(2, 3, 3, nvars, c) == out;
 }
 
-
+// This works!
 harness void experiment1(){
-    
+    //Use this harness for the example from 1.b
+    //Assume that x is the first variable and y is the second variable, so the
+    //input x=8 and y=3, for example will correspond to an array {8,3}.
     aux(5, 5, 15);
     aux(8, 3, 14);
     aux(1234, 227, 1688);
 }
 
 
-
+// This part Sketch couldn't resolve it
 /*
 harness void experiment2(){
-   
+    //Use this harness for the example from 1.e
+    //Assume that x is the first variable and y is the second variable, so the
+    //input x=10 and y=7, for example will correspond to an array {10,7}.
     aux(10, 7, 17);
     aux(4, 7, -7);
     aux(10, 3, 13);
