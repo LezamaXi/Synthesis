@@ -595,8 +595,8 @@ function structured(inputoutputs){
   var if1 = randInt(list2[0], list1[1]);
   var if2 = randInt(list2[1], list1[2]);
   var if3 = randInt(list2[2], list1[3]);
-  var elseExp = bottomUpFaster(3,[VR, NUM, PLUS, TIMES, ITE], [AND, NOT, LT, FALSE], ["x"], [1,2,3,4,5,6,7,8,9], others);
-  var finalExp = ite(lt(VR("x"), NUM(if1)), te1, ite(lt(VR("x"), NUM(if2)), te2, ite(lt(VR("x"), NUM(if3)), te3, elseExp)));
+  var elseExp = times(num(2), vr("x"));
+  var finalExp = ite(lt(vr("x"), num(if1)), te1, ite(lt(vr("x"), num(if2)), te2, ite(lt(vr("x"), num(if3)), te3, elseExp)));
 
   return finalExp;
 
