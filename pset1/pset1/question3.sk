@@ -1,156 +1,87 @@
-/*
-struct NUM {
-    int value;
-    char[] type: "NUM";
+generator bit expBoolean(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
 
-}
-
-struct FALSE{
-    bit flase;
-    char[] type;
-}
-
-struct VAR{
-    char[] name;
-    char[] type;   
-}
-
-struct PLUS{
-    int left;
-    int right;
-    char[] type;   
-}
-
-struct TIMES{
-    int left;
-    int right;
-    char[] type;   
-}
-
-struct LT{
-    int left;
-    int right;
-    char[] type;   
-}
-
-struct AND{
-    bit left;
-    bit right;
-    char[] type;   
-}
-*/
-
-adt EXP{
-
-    NUM{
-        int value;
+    if (bnd == 0) {
+        return false;
     }
-
-    FLSE{
-        bit value;
+    int t = ??;
+    if (t ==0) {
+        return false;
     }
-
-    VAR{
-        char[n] name;   
+    if (t ==1) {
+        bit t1 = expBoolean(nvars, nconsts, (bnd-1), vars, consts);
+        return !t1;
     }
-
-    PLUS{
-        EXP left;
-        EXP right;   
+    if (t ==2) {
+        bit t1 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
+        bit t2 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
+        return t1 < t2;
     }
-
-    TIMES{
-        EXP left;
-        EXP right;
-    }
-
-    LT{
-        EXP left;
-        EXP right;
-    }
-
-    AND{
-        EXP left;
-        EXP right;
-    }
-
-    NOT{
-        EXP left;    
-    }
-
-    ITE{
-        EXP cond;
-        EXP tcase;
-        EXP fcase;
+    if (t ==3) {
+        bit t1 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
+        bit t2 = expBoolean(nvars, nconsts, bnd-1, vars, consts);
+        return t1 && t2;
     }
 }
 
-// Define the languaje, by using Algebraic Data types in sketch
-int searchEnv(char[][] envt, char[] var){
-    for(i = 0; i < (sizeof(envt) / sizeof(envt[0])); i++){
-        if(envt[i] == var){
-            return envt[i][1];
-        }
-    }
-}
-
-void interpret(EXP exp, char[n][n] envt){
-    switch(exp){
-        case NUM:{
-            return exp.value;
-        }
-        case FLSE:{
-            bit f = exp.value;
-            f = 0;
-            return f;
-        }
-        case VAR:{
-            return searchEnv(envt, exp.name);
-        }
-        case PLUS:{
-            return (interpret(exp.left, envt) + interpret(exp.right, envt));
-        }
-        case TIMES:{
-            return (interpret(exp.left, envt) * interpret(exp.right, envt));
-        }
-        case LT:{
-            return (interpret(exp.left, envt) < interpret(exp.right, envt));
-        } 
-        case AND:{
-            return (interpret(exp.left, envt) && interpret(exp.right, envt));
-        } 
-        case NOT:{
-            return !(interpret(exp.left, envt));
-        } 
-        case ITE:{
-            if (interpret(exp.cond, envt)){
-                return (interpret(exp.tcase, envt));
-            }
-
-            return (interpret(exp.fcase, envt));
-        } 
-    }
-}
-
-
-generator int exp([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconsts] consts){
+generator int expInteger(int nvars, int nconsts, int bnd, int[nvars] vars, int[nconsts] consts){
     //In this generator, nvars is the number of variables and nconsts is the number of constants.
     //the array vars contains the values of all the variables and the array consts of all the constants.
     //Note that unlike problem 1, where you were generating ASTs, here you are synthesizing the actual function.
     //Also note that you will probably need a separate generator for the boolean expressions.
-
+    if (bnd == 0) {
+        int nconstant = ??;
+        return consts[nconstant];
+    }
+    int t = ??;
+    if (t == 0) {
+        int nconstant = ??;
+        return consts[nconstant];
+    }
+    if (t == 1) {
+        int nvar = ??;
+        return vars[nvar];
+    }
+    if (t == 2) {
+        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        return t1 + t2;
+    }
+    if (t == 3) {
+        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        return t1 * t2;
+    }
+    if (t == 4) {
+        bit condition = expBoolean(nvars, nconsts, bnd-1, vars, consts);
+        int t1 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        int t2 = expInteger(nvars, nconsts, bnd-1, vars, consts);
+        return condition ? t1:t2;
+    }
 }
 
-
-harness void experiment2(){
-    //Use this harness for the example from 1.e
-    //Assume that x is the first variable and y is the second variable, so the
-    //input x=10 and y=7, for example will correspond to an array {10,7}.
+void aux(int x, int y, int out) {
+    int[3] ncons = [-1,0,1];
+    int[2] nvars = [x,y];
+    assert expInteger(2, 3, 3, nvars, ncons) == out;
 }
 
 
 harness void experiment1(){
-    //Use this harness for the example from 1.b
-    //Assume that x is the first variable and y is the second variable, so the
-    //input x=8 and y=3, for example will correspond to an array {8,3}.
+    
+    aux(5, 5, 15);
+    aux(8, 3, 14);
+    aux(1234, 227, 1688);
 }
+
+
+
+/*
+harness void experiment2(){
+   
+    aux(10, 7, 17);
+    aux(4, 7, -7);
+    aux(10, 3, 13);
+    aux(1, -7, -6);
+    aux(1, 8, -8);
+}
+*/
