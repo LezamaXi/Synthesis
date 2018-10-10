@@ -1,0 +1,99 @@
+//this function say to us if the actual position is in any obstacle in the list
+bit in_array(int n, int[2][n] arr, int i, int j){
+	for(int k = 0; k < n; k++){
+		if(arr[0][k] == i && arr[1][k] == j)
+			return true;
+	}
+	return false;
+}
+
+//absolute value for the manhatan distance, it return a positive integer
+int abs_value(int x){
+	if(x > 0)
+		return x;
+	else
+		return -x;
+}
+
+int rect(int x){
+	if(x > 0){
+		return 1;
+	}
+	if(x < 0){
+		return -1;
+	}
+	return 0;
+}
+
+// In this generator, n is the number of obstacles in the space, myi is the current i and myj is the current j 
+// coordinate of the agent, obstacles is an array with the i and j coordinates of the obstacles and goal are 
+// coordinates of the goal stored in positions 0 and 1 
+generator int[2] control(int n, ref int myi, ref int myj, int[2][n] obstacles, int[2] goal, int bnd){
+	if(bnd == 25)
+		return false;
+	else
+		bnd++;
+	//  aqui nada mas es checar si el goal es igual a mi posicion actual
+	if (myj == goal[1] && myi == goal[0]) {
+        return true;
+    }
+    int t = ??;
+    //we move i
+    if(t == 0){
+    	int delta = rect(??);
+	    int auxi = myi + delta;
+	    assert auxi >= 0;
+	    assert auxi <= 7;
+	    //if exceede the laberint lenght
+	    //if(auxi < 0 && auxi > 7){
+	    //	int auxi = myi - delta;
+	    //}
+
+	    if(in_array(n, obstacles, auxi, myj)){
+	    	return control(n, myi, myj, obstacles, goal, bnd);
+	    }
+    	int manhi = abs_value(goal[1] - myj) + abs_value(goal[0] - auxi);
+    	int manh = abs_value(goal[1] - myj) + abs_value(goal[0] - myi);
+    	assert manhi < manh;
+	    myi = auxi;
+	    return control(n, myi, myj, obstacles, goal, bnd);
+    }
+    //we move j
+    if(t == 1){
+    	int delta = rect(??);
+	    int auxj = myj + delta;
+	    assert auxj >= 0;
+	    assert auxj <= 7;
+	    //if exceede the laberint lenght
+	    //if(auxj < 0 && auxj > 7){
+	    //	int auxj = myj - delta;
+	    //}
+
+	    if(in_array(n, obstacles, myi, auxj)){
+	    	return control(n, myi, myj, obstacles, goal, bnd);
+	    }
+    	int manhj = abs_value(goal[1] - auxj) + abs_value(goal[0] - myi);
+    	int manh = abs_value(goal[1] - myj) + abs_value(goal[0] - myi);
+    	assert manhj < manh;
+	    myj = auxj;
+	    return control(n, myi, myj, obstacles, goal, bnd);
+    }
+
+}
+void contr(int n, int myi, int myj, int[2][n] obstacles, int[2] goal){
+	assert control(n, myi, myj, obstacles, goal, 0) != true;
+
+}
+
+harness void experiment(){
+	int[2] goal;
+    goal[0] = 4;
+    goal[1] = 5;
+
+    int[2][2] obs;
+    obs[0][0] = 1;
+    obs[0][1] = 2;
+    obs[1][0] = 2;
+    obs[1][1] = 4;
+	contr(2, 1, 3, obs, goal);
+}
